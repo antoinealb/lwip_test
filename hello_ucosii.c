@@ -22,22 +22,25 @@ void ipinit_done_cb(void *a) {
 
 void ipinit_task(void* pdata)
 {
+    /* We reset the flag. */
     ip_init_done = 0;
 
-    tcpip_init(ipinit_done_cb, NULL);                            //call this routine if you use an OS
+    /* We start the init of the IP stack. */
+    tcpip_init(ipinit_done_cb, NULL);
 
+    /* We wait for the IP stack to be fully initialized. */
     while(!ip_init_done);
+
     printf("IP Stack init complete\n");
 
-
+    /* We delete the init task before returning. */
     OSTaskDel(IPINIT_TASK_PRIORITY);
 }
 
 int main(void)
 {
-    //printf("--> boot biatch\n");
+    printf("==== Boot ====\n");
     sys_init();
-    printf("booted in theory mofo\n");
     OSTaskCreateExt(ipinit_task,
                     NULL,
                     &ipinit_task_stk[TASK_STACKSIZE-1],
