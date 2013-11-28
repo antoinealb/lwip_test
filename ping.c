@@ -29,9 +29,9 @@ static void tcpecho_thread(void *arg) {
             u16_t len;
 
             while ((err = netconn_recv(newconn, &buf)) == ERR_OK) {
-                printf("Recved\n");
                 do {
                     netbuf_data(buf, &data, &len);
+                    printf("Received \"%s\" (len = %d) !\n", data, len); 
                     err = netconn_write(newconn, data, len, NETCONN_COPY);
 #if 1
                     if (err != ERR_OK) {
@@ -53,7 +53,7 @@ const char *test_str = "data";
 
 void send_task(void *arg) {
     ip_addr_t destination;
-	printf("%s()\n", __FUNCTION__);
+    printf("%s()\n", __FUNCTION__);
     struct netconn *conn;
     err_t err;
     /* Create a new connection identifier. */
@@ -81,7 +81,7 @@ void send_task(void *arg) {
 
 void ping_init(void) {
     printf("%s()\n", __FUNCTION__);
-  sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
-  send_task(NULL);
-  //sys_thread_new("send_task", send_task, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    send_task(NULL);
+    //sys_thread_new("send_task", send_task, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 }
