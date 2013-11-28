@@ -20,26 +20,27 @@ void ipinit_done_cb(void *a) {
     ip_init_done = 1;
 }
 
-void ipinit_task(void* pdata)
-{
+void ipinit_task(void* pdata) {
+    struct netif *n;
     /* We reset the flag. */
     ip_init_done = 0;
 
     /* We start the init of the IP stack. */
     tcpip_init(ipinit_done_cb, NULL);
 
-    printf("Waiting for init complete...\n");
-
     /* We wait for the IP stack to be fully initialized. */
+    printf("Waiting for LWIP init...\n");
     while(!ip_init_done);
+    printf("LWIP init complete\n");
 
-    printf("IP Stack init complete\n");
-
-    printf("Listing ifs...\n");
-    struct netif *n;
+    /* Lists every network interface and shows its IP. */
+    printf("Listing network interfaces...\n");
     for(n=netif_list;n !=NULL;n=n->next) {
-        printf("%s: %p\n", n->name, n->ip_addr.addr);
+        /* Converts the IP adress to a human readable format. */
+        char buf[16+1];
+        ipaddr_ntoa_r(n->ip_addr, buf, 17);
 
+        printf("%s%d: %s\n", n->name, n->num, buf);
     }
 
     ping_init();
