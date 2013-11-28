@@ -54,7 +54,7 @@ const char *test_str = "data";
 void send_task(void *arg) {
     ip_addr_t destination;
 	printf("%s()\n", __FUNCTION__);
-    struct netconn *conn, *newconn;
+    struct netconn *conn;
     err_t err;
     /* Create a new connection identifier. */
     conn = netconn_new(NETCONN_TCP);
@@ -71,8 +71,8 @@ void send_task(void *arg) {
         for(;;);
     }
 
-    printf("TCP is : %p actual type is %p\n", NETCONN_TCP, conn->type);
-    //err = netconn_write(newconn, test_str, strlen(test_str), NETCONN_NOCOPY);
+    /* Don't send final \0 */
+    err = netconn_write(conn, test_str, strlen(test_str), NETCONN_NOCOPY);
     if (err != ERR_OK) {
         printf("tcpsend: netconn_write: error %d \"%s\"\n",err, lwip_strerr(err));
         for(;;);
