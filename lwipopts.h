@@ -9,7 +9,8 @@
 
 #define LWIPOPTS_H_
 
-#define DEFAULT_THREAD_PRIO 30
+
+//#define DEFAULT_THREAD_PRIO 30
 
 #define LWIP_ARP 0
 #define SYS_LIGHTWEIGHT_PROT 0
@@ -28,7 +29,8 @@
 //#define PPPOS_SUPPORT 1
 #define NUM_PPP 1
 
-#define  MEM_SIZE 10000
+//#define LWIP_DEBUG 1
+#define  MEM_SIZE 10000*/
 
 
 #endif /* LWIPOPTS_H_ */

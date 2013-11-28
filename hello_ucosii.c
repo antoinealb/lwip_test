@@ -28,10 +28,21 @@ void ipinit_task(void* pdata)
     /* We start the init of the IP stack. */
     tcpip_init(ipinit_done_cb, NULL);
 
+    printf("Waiting for init complete...\n");
+
     /* We wait for the IP stack to be fully initialized. */
     while(!ip_init_done);
 
     printf("IP Stack init complete\n");
+
+    printf("Listing ifs...\n");
+    struct netif *n;
+    for(n=netif_list;n !=NULL;n=n->next) {
+        printf("%s: %p\n", n->name, n->ip_addr.addr);
+
+    }
+
+    ping_init();
 
     /* We delete the init task before returning. */
     OSTaskDel(IPINIT_TASK_PRIORITY);
