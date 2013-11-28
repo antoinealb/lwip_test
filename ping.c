@@ -52,7 +52,7 @@ static void tcpecho_thread(void *arg) {
 const char *test_str = "data";
 
 void send_task(void *arg) {
-    ip_addr_t destination;
+    ip_addr_t destination, self_ip;
     printf("%s()\n", __FUNCTION__);
     struct netconn *conn;
     err_t err;
@@ -60,10 +60,14 @@ void send_task(void *arg) {
     conn = netconn_new(NETCONN_TCP);
 
 
+    /* Sets the device we want to connect to. */
     ip_addr_set_loopback(&destination);
 
+    /* Gets our own IP adress. */
+    ip_addr_set_loopback(&self_ip);
+
     /* Bind connection to well known port number 7. */
-    netconn_bind(conn, &destination, 7);
+    netconn_bind(conn, &self_ip, 7);
 
     err = netconn_connect(conn, &destination, 7);
     if (err != ERR_OK) {
