@@ -38,7 +38,7 @@ void ipinit_task(void* pdata) {
     for(n=netif_list;n !=NULL;n=n->next) {
         /* Converts the IP adress to a human readable format. */
         char buf[16+1];
-        ipaddr_ntoa_r(n->ip_addr, buf, 17);
+        ipaddr_ntoa_r(&n->ip_addr, buf, 17);
 
         printf("%s%d: %s\n", n->name, n->num, buf);
     }
