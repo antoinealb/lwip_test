@@ -5,6 +5,7 @@
 # List of include directories for -I compiler option (-I added when used).
 # Includes the BSP.
 ALT_INCLUDE_DIRS := ../lwip_ucos2/src/include/ ../lwip_ucos2/src/include/ipv4 ../lwip_ucos2/src/include/ipv6 ../lwip_ucos2/src/contrib/ports/ucos-ii/include/ ../TestIP
+ALT_INCLUDE_DIRS += ../lwip_ucos2/src/netif/
 # List of library directories for -L linker option (-L added when used).
 # Includes the BSP.
 ALT_LIBRARY_DIRS :=
@@ -207,6 +208,7 @@ C_SRCS += ../lwip_ucos2/src/netif/ppp/ppp_oe.c
 C_SRCS += ../lwip_ucos2/src/netif/ppp/randm.c
 C_SRCS += ../lwip_ucos2/src/netif/ppp/vj.c
 C_SRCS += ping.c
+C_SRCS += serial_io.c
 CXX_SRCS :=
 ASM_SRCS :=
 

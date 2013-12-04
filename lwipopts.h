@@ -25,8 +25,8 @@
 #define LWIP_DNS 1
 #define LWIP_HAVE_LOOPIF 1
 #define LWIP_NETIF_LOOPBACK 1
-//#define PPP_SUPPORT 1
-//#define PPPOS_SUPPORT 1
+#define PPP_SUPPORT 1
+#define PPPOS_SUPPORT 1
 #define NUM_PPP 1
 
 //#define LWIP_DEBUG 1
