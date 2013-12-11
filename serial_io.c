@@ -1,18 +1,19 @@
 #include <lwip/ip.h>
-#include <ppp/ppp.h>
+#include <netif/slipif.h>
+
+#include "lwip/sio.h"
 
 /**
- * Writes to the serial device.
+ * Sends a single character to the serial device.
  * 
+ * @param c character to send
  * @param fd serial device handle
- * @param data pointer to data to send
- * @param len length (in bytes) of data to send
- * @return number of bytes actually sent
  * 
- * @note This function will block until all data can be sent.
+ * @note This function will block until the character can be sent.
  */
-u32_t sio_write(sio_fd_t fd, u8_t *data, u32_t len) {
-
+void sio_send(u8_t c, sio_fd_t fd) 
+{
+    printf("%s(%d)\n", __FUNCTION__, (int)c);
 }
 
 /**
@@ -24,15 +25,35 @@ u32_t sio_write(sio_fd_t fd, u8_t *data, u32_t len) {
  * @return number of bytes actually received - may be 0 if aborted by sio_read_abort
  * 
  */
-u32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len) {
-
+u32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len) 
+{
+    return 0;
 }
 
+
+
 /**
- * Aborts a blocking sio_read() call.
+ * Tries to read from the serial device. Same as sio_read but returns
+ * immediately if no data is available and never blocks.
  * 
  * @param fd serial device handle
+ * @param data pointer to data buffer for receiving
+ * @param len maximum length (in bytes) of data to receive
+ * @return number of bytes actually received
  */
-void  sio_read_abort(sio_fd_t fd) {
-
+u32_t sio_tryread(sio_fd_t fd, u8_t *data, u32_t len) 
+{
+    return sio_read(fd, data, len);
+}
+ 
+/**
+ * Opens a serial device for communication.
+ * 
+ * @param devnum device number
+ * @return handle to serial device if successful, NULL otherwise
+ */
+sio_fd_t sio_open(u8_t devnum) 
+{
+    printf("%s(%d)\n", __FUNCTION__, devnum);
+    return 42;
 }

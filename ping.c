@@ -61,7 +61,9 @@ void send_task(void *arg) {
 
 
     /* Sets the device we want to connect to. */
-    ip_addr_set_loopback(&destination);
+
+    IP4_ADDR(&destination, 192,168,1,3);
+    //ip_addr_set_loopback(&destination);
 
     /* Gets our own IP adress. */
     ip_addr_set_loopback(&self_ip);
@@ -69,6 +71,7 @@ void send_task(void *arg) {
     /* Bind connection to well known port number 7. */
     netconn_bind(conn, &self_ip, 7);
 
+    printf("Connecting...\n");
     err = netconn_connect(conn, &destination, 7);
     if (err != ERR_OK) {
         printf("tcpsend: netconn_connect: error %d \"%s\"\n", err, lwip_strerr(err));
@@ -81,11 +84,13 @@ void send_task(void *arg) {
         printf("tcpsend: netconn_write: error %d \"%s\"\n",err, lwip_strerr(err));
         for(;;);
     }
+    for(;;);
 }
 
 void ping_init(void) {
     printf("%s()\n", __FUNCTION__);
     sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    //sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
     send_task(NULL);
-    //sys_thread_new("send_task", send_task, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+
 }
