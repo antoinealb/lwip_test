@@ -142,7 +142,7 @@ ACDS_VERSION := 12.1sp1
 ELF := TestIP.elf
 
 # Paths to C, C++, and assembly source files.
-C_SRCS += hello_ucosii.c
+C_SRCS += main.c
 C_SRCS += ../lwip_ucos2/src/api/api_lib.c
 C_SRCS += ../lwip_ucos2/src/api/api_msg.c
 C_SRCS += ../lwip_ucos2/src/api/err.c
