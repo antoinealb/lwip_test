@@ -91,8 +91,8 @@ void send_task(void *arg) {
 
 void ping_init(void) {
     printf("%s()\n", __FUNCTION__);
-    sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
-    sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, 32);
+    sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, 33);
     //send_task(NULL);
 
 }
