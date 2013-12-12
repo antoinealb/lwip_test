@@ -61,9 +61,11 @@ void send_task(void *arg) {
 
 
     /* Sets the device we want to connect to. */
-
+#if 0
     IP4_ADDR(&destination, 192,168,1,3);
-    //ip_addr_set_loopback(&destination);
+#else
+    ip_addr_set_loopback(&destination);
+#endif
 
     /* Gets our own IP adress. */
     ip_addr_set_loopback(&self_ip);
@@ -90,7 +92,7 @@ void send_task(void *arg) {
 void ping_init(void) {
     printf("%s()\n", __FUNCTION__);
     sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
-    //sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
-    send_task(NULL);
+    sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+    //send_task(NULL);
 
 }

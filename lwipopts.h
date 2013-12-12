@@ -31,6 +31,7 @@
 //#define LWIP_DEBUG 1
 #define LWIP_HAVE_SLIPIF 1
 #define  MEM_SIZE 10000
+//#define LWIP_DEBUG 1
 
 
 #endif /* LWIPOPTS_H_ */

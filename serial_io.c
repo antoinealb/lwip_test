@@ -1,7 +1,13 @@
+#include <stdio.h>
 #include <lwip/ip.h>
 #include <netif/slipif.h>
 
 #include "lwip/sio.h"
+
+
+/* Altera files, to toggle LEDs */
+#include <os_cfg.h>
+#include <io.h>>
 
 /**
  * Sends a single character to the serial device.
@@ -13,7 +19,14 @@
  */
 void sio_send(u8_t c, sio_fd_t fd) 
 {
-    printf("%s(%d)\n", __FUNCTION__, (int)c);
+    int32_t led_val;
+
+    /* Toggles Tx led. */
+    led_val = IORD(LED_BASE, 0); 
+    led_val ^= (1<<0);
+    IOWR(LED_BASE, 0, led_val);
+
+    fputc((int)c, (FILE *)fd);
 }
 
 /**
@@ -27,7 +40,12 @@ void sio_send(u8_t c, sio_fd_t fd)
  */
 u32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len) 
 {
-    return 0;
+    /* Toggles Rx led */
+    int32_t led_val;
+    led_val = IORD(LED_BASE, 0); 
+    led_val ^= (1<<1);
+    IOWR(LED_BASE, 0, led_val);
+    return (u32_t)fread((void *)data, 1, (size_t)len, (FILE *)fd);
 }
 
 
@@ -54,6 +72,9 @@ u32_t sio_tryread(sio_fd_t fd, u8_t *data, u32_t len)
  */
 sio_fd_t sio_open(u8_t devnum) 
 {
-    printf("%s(%d)\n", __FUNCTION__, devnum);
-    return 42;
+    FILE *fp;
+
+    fp = fopen("/dev/comBT1", "rw");
+
+    return (sio_fd_t)fp;
 }

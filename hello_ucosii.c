@@ -12,14 +12,13 @@
 /* Stack for the init task. */
 OS_STK    ipinit_task_stk[TASK_STACKSIZE];
 
-/* We allow the use of a shared variable as a IPC mecanism because it is only
- * written to from one thread.
- */
-
-OS_EVENT* connected_sem;
+/* This is a shared semaphore to signal when lwIP init is done. */
 OS_EVENT* lwip_init_done;
+
+/* Serial net interface */
 struct netif netif;
 
+/** Callback for lwIP init completion. */
 void ipinit_done_cb(void *a) {
     OSSemPost(lwip_init_done);
 }
@@ -27,15 +26,16 @@ void ipinit_done_cb(void *a) {
 
 
 void ipinit_task(void* pdata) {
-
-    /* startup defaults (may be overridden by one or more opts) */
-    static ip_addr_t ipaddr, netmask, gw;
-    IP4_ADDR(&gw, 192,168,0,1);
-    IP4_ADDR(&ipaddr, 192,168,0,2);
-    IP4_ADDR(&netmask, 255,255,255,0);
     struct netif *n;
     INT8U err;
-    /* We reset the flag. */
+
+    /* Netif configuration */
+    static ip_addr_t ipaddr, netmask, gw;
+    IP4_ADDR(&gw, 192,168,0,1);
+    IP4_ADDR(&ipaddr, 192,168,0,9);
+    IP4_ADDR(&netmask, 255,255,255,0);
+
+    /* Creates the "Init done" semaphore. */
     lwip_init_done = OSSemCreate(0);
 
 
@@ -47,20 +47,21 @@ void ipinit_task(void* pdata) {
     OSSemPend(lwip_init_done, 0, &err);
     printf("LWIP init complete\n");
 
-
+    /* Adds the serial interface to the list of network interfaces and makes it the default route. */ 
     netif_add(&netif, &ipaddr, &netmask, &gw, NULL, slipif_init, tcpip_input);
     netif_set_default(&netif);
-    netif_set_up(&netif); // */
+    netif_set_up(&netif);
+
     /* Lists every network interface and shows its IP. */
     printf("Listing network interfaces...\n");
     for(n=netif_list;n !=NULL;n=n->next) {
         /* Converts the IP adress to a human readable format. */
         char buf[16+1];
         ipaddr_ntoa_r(&n->ip_addr, buf, 17);
-
         printf("%s%d: %s\n", n->name, n->num, buf);
     }
 
+    /* Creates a simple demo app. */
     ping_init();
 
     /* We delete the init task before returning. */
