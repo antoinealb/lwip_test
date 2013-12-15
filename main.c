@@ -64,14 +64,20 @@ void ipinit_task(void* pdata) {
     /* Creates a simple demo app. */
     ping_init();
 
+    /* Deletes the init done semaphore. */
+    OSSemDel(lwip_init_done, OS_DEL_ALWAYS, &err);
+
     /* We delete the init task before returning. */
     OSTaskDel(IPINIT_TASK_PRIORITY);
+
 }
 
 int main(void)
 {
     printf("==== Boot ====\n");
-    sys_init();
+
+    /* We have to do all the init in a task because lwIP expects most
+     * multi thread functionality to be available right away. */
     OSTaskCreateExt(ipinit_task,
                     NULL,
                     &ipinit_task_stk[TASK_STACKSIZE-1],
