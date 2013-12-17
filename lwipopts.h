@@ -6,13 +6,13 @@
  */
 
 #ifndef LWIPOPTS_H_
-
 #define LWIPOPTS_H_
+
 
 
 /* Network Time protocol config. */
 #define SNTP_SERVER_ADDRESS  "213.161.194.93" /* pool.ntp.org */
-
+#define SNTP_SET_SYSTEM_TIME_US(sec, us) time_set((sec), (us))
 
 
 #define LWIP_ARP 0
