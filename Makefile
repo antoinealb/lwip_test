@@ -209,6 +209,8 @@ C_SRCS += ../lwip_ucos2/src/netif/ppp/randm.c
 C_SRCS += ../lwip_ucos2/src/netif/ppp/vj.c
 C_SRCS += ping.c
 C_SRCS += serial_io.c
+C_SRCS += sntp.c
+C_SRCS += time.c
 CXX_SRCS :=
 ASM_SRCS :=
 

@@ -10,6 +10,10 @@
 #define LWIPOPTS_H_
 
 
+/* Network Time protocol config. */
+#define SNTP_SERVER_ADDRESS  "213.161.194.93" /* pool.ntp.org */
+
+
 
 #define LWIP_ARP 0
 #define SYS_LIGHTWEIGHT_PROT 0
