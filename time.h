@@ -1,6 +1,9 @@
 #ifndef _TIME_H_
 #define _TIME_H_
 
+/** Inits time module. */
+void time_init(void);
+
 /** Returns the current time, rounded to closest second. */
 int time_get_s(void);
 
