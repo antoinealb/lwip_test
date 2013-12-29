@@ -7,7 +7,8 @@
 
 /* Altera files, to toggle LEDs */
 #include <os_cfg.h>
-#include <io.h>>
+#include <io.h>
+#include <os_cpu.h>
 
 /**
  * Sends a single character to the serial device.
@@ -19,12 +20,15 @@
  */
 void sio_send(u8_t c, sio_fd_t fd) 
 {
+    OS_CPU_SR cpu_sr;
     int32_t led_val;
 
     /* Toggles Tx led. */
+    OS_ENTER_CRITICAL();
     led_val = IORD(LED_BASE, 0); 
     led_val ^= (1<<0);
     IOWR(LED_BASE, 0, led_val);
+    OS_EXIT_CRITICAL();
 
     fputc((int)c, (FILE *)fd);
 }
@@ -40,11 +44,15 @@ void sio_send(u8_t c, sio_fd_t fd)
  */
 u32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len) 
 {
-    /* Toggles Rx led */
+    OS_CPU_SR cpu_sr;
     int32_t led_val;
+
+    /* Toggles Rx led */
+    OS_ENTER_CRITICAL();
     led_val = IORD(LED_BASE, 0); 
     led_val ^= (1<<1);
     IOWR(LED_BASE, 0, led_val);
+    OS_EXIT_CRITICAL();
     return (u32_t)fread((void *)data, 1, (size_t)len, (FILE *)fd);
 }
 
