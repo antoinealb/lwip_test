@@ -5,10 +5,19 @@
 #include "lwip/sio.h"
 
 
+
+/** Enables activity LEDs. */
+#define ACTIVITY_LED_TOGGLE
+
+#ifdef ACTIVITY_LED_TOGGLE
 /* Altera files, to toggle LEDs */
 #include <os_cfg.h>
 #include <io.h>
 #include <os_cpu.h>
+
+#define ACTIVITY_LED_TX 0
+#define ACTIVITY_LED_RX 1
+#endif
 
 /**
  * Sends a single character to the serial device.
@@ -20,15 +29,17 @@
  */
 void sio_send(u8_t c, sio_fd_t fd) 
 {
-    OS_CPU_SR cpu_sr;
     int32_t led_val;
 
     /* Toggles Tx led. */
+#ifdef ACTIVITY_LED_TOGGLE
+    OS_CPU_SR cpu_sr;
     OS_ENTER_CRITICAL();
     led_val = IORD(LED_BASE, 0); 
-    led_val ^= (1<<0);
+    led_val ^= (1 << ACTIVITY_LED_TX);
     IOWR(LED_BASE, 0, led_val);
     OS_EXIT_CRITICAL();
+#endif
 
     fputc((int)c, (FILE *)fd);
 }
@@ -44,15 +55,17 @@ void sio_send(u8_t c, sio_fd_t fd)
  */
 u32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len) 
 {
-    OS_CPU_SR cpu_sr;
     int32_t led_val;
 
     /* Toggles Rx led */
+#ifdef ACTIVITY_LED_TOGGLE
+    OS_CPU_SR cpu_sr;
     OS_ENTER_CRITICAL();
     led_val = IORD(LED_BASE, 0); 
-    led_val ^= (1<<1);
+    led_val ^= (1 << ACTIVITY_LED_RX);
     IOWR(LED_BASE, 0, led_val);
     OS_EXIT_CRITICAL();
+#endif
     return (u32_t)fread((void *)data, 1, (size_t)len, (FILE *)fd);
 }
 
