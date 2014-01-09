@@ -15,7 +15,6 @@
 #define SNTP_SET_SYSTEM_TIME_US(sec, us) time_set((sec), (us))
 
 
-#define LWIP_ARP 0
 #define SYS_LIGHTWEIGHT_PROT 0
 #define MEM_LIBC_MALLOC 1
 #define MEMP_MEM_MALLOC 1
@@ -25,15 +24,18 @@
 #define IP_FRAG 1
 #define LWIP_BROADCAST_PING 1
 #define LWIP_MULTICAST_PING 1
-#define LWIP_DNS 1
+#define LWIP_DNS 0
 #define LWIP_HAVE_LOOPIF 1
 #define LWIP_NETIF_LOOPBACK 1
 
-#if 0
-#define PPP_SUPPORT 1
-#define PPPOS_SUPPORT 1
-#define NUM_PPP 1
+
+#ifdef __unix__
+/* <sys/time.h> is included in cc.h! */
+#define LWIP_TIMEVAL_PRIVATE 0
+#define LWIP_ARP 1
+#define LWIP_HAVE_SLIPIF 0
 #else
+#define LWIP_ARP 0
 #define LWIP_HAVE_SLIPIF 1
 #endif
 
