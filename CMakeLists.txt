@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 2.6)
 set(lwip_root ../lwip_ucos2)
 
 # Name of the project
-project(cengine)
+project(lwip_test)
 
 file(GLOB_RECURSE
 	core_files
@@ -37,10 +37,10 @@ find_package (Threads)
 
 # Executable source file definitions
 add_executable(
-	engine
+    robot
 	${core_files}
     ${port_files}
     ${project_files}
 )
 
-target_link_libraries (engine ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(robot ${CMAKE_THREAD_LIBS_INIT})
