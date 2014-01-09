@@ -22,6 +22,11 @@ file(GLOB_RECURSE
     ${lwip_root}/src/contrib/ports/unix/netif/*
 )	
 
+file(GLOB
+    project_files
+    main.c
+    ping.c)
+
 include_directories(./)
 include_directories(${lwip_root}/src/include)
 include_directories(${lwip_root}/src/include/ipv4)
@@ -35,6 +40,7 @@ add_executable(
 	engine
 	${core_files}
     ${port_files}
+    ${project_files}
 )
 
 target_link_libraries (engine ${CMAKE_THREAD_LIBS_INIT})

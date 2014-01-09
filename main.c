@@ -1,24 +1,31 @@
 
 #include <stdio.h>
-#include "includes.h"
 
+#include <lwip/sys.h>
 #include <lwip/tcpip.h>
 #include <lwip/ip.h>
-#include <netif/slipif.h>
 
+#ifdef __unix__
+#include <netif/tapif.h>
+#else
+#include <netif/slipif.h>
+#endif
+
+#ifndef __unix__
 #define   TASK_STACKSIZE          2048
 #define   INIT_TASK_PRIORITY      20
 
 /** Stack for the init task. */
 OS_STK    init_task_stk[TASK_STACKSIZE];
+#endif
 
 /** Shared semaphore to signal when lwIP init is done. */
-OS_EVENT* lwip_init_done;
+sys_sem_t lwip_init_done;
 
 /** Serial net interface */
 struct netif slipf;
 
-void list_netifs(void) 
+void list_netifs(void)
 {
     struct netif *n; /* used for iteration. */
     for(n=netif_list;n !=NULL;n=n->next) {
@@ -31,13 +38,13 @@ void list_netifs(void)
 
 /** @rief Callback for lwIP init completion.
  *
- * This callback is automatically called from the lwIP thread after the 
+ * This callback is automatically called from the lwIP thread after the
  * initialization is complete. It must then tell the main init task that it
  * can proceed. To do thism we use a semaphore that is posted from the lwIP
  * thread and on which the main init task is pending. */
 void ipinit_done_cb(void *a)
 {
-    OSSemPost(lwip_init_done);
+    sys_sem_signal(&lwip_init_done);
 }
 
 
@@ -51,8 +58,6 @@ void ipinit_done_cb(void *a)
  * 5. List all network interfaces and their settings, for debug purposes.
  */
 void ip_stack_init(void) {
-    INT8U err;
-
     /* Netif configuration */
     static ip_addr_t ipaddr, netmask, gw;
 
@@ -61,23 +66,31 @@ void ip_stack_init(void) {
     IP4_ADDR(&netmask, 255,255,255,0);
 
     /* Creates the "Init done" semaphore. */
-    lwip_init_done = OSSemCreate(0);
+    sys_sem_new(&lwip_init_done, 0);
 
     /* We start the init of the IP stack. */
     tcpip_init(ipinit_done_cb, NULL);
 
     /* We wait for the IP stack to be fully initialized. */
     printf("Waiting for LWIP init...\n");
-    OSSemPend(lwip_init_done, 0, &err);
+    sys_sem_wait(&lwip_init_done);
+
+    /* Deletes the init done semaphore. */
+    sys_sem_free(&lwip_init_done);
     printf("LWIP init complete\n");
 
-    /* Adds the serial interface to the list of network interfaces and makes it the default route. */ 
+
+#ifdef __unix__
+    /* Adds a tap pseudo interface for unix debugging. */
+    netif_add(&slipf,&ipaddr, &netmask, &gw, NULL, tapif_init, tcpip_input);
+#else
+    /* Adds the serial interface to the list of network interfaces and makes it the default route. */
     netif_add(&slipf, &ipaddr, &netmask, &gw, NULL, slipif_init, tcpip_input);
+#endif
+
     netif_set_default(&slipf);
     netif_set_up(&slipf);
 
-    /* Deletes the init done semaphore. */
-    OSSemDel(lwip_init_done, OS_DEL_ALWAYS, &err);
 }
 
 /** @brief Init task.
@@ -97,14 +110,19 @@ void init_task(void *pdata)
     /* Creates a simple demo app. */
     ping_init();
 
+#ifndef __unix__
     /* We delete the init task before returning. */
     OSTaskDel(INIT_TASK_PRIORITY);
+#endif
 }
 
 int main(void)
 {
     printf("==== Boot ====\n");
 
+#ifdef __unix__
+    init_task(NULL);
+#else
     /* We have to do all the init in a task because lwIP expects most
      * multi thread functionality to be available right away. */
     OSTaskCreateExt(init_task,
@@ -116,6 +134,7 @@ int main(void)
                     TASK_STACKSIZE,
                     NULL, NULL);
     OSStart();
+#endif
 
     /* We should never get here because OSSStart() never returns. */
     for(;;);
