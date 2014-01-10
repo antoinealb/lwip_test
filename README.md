@@ -1,7 +1,7 @@
 lwip_test
 =========
 
-[![Build Status](https://travis-ci.org/[antoinealb]/[lwip_test].png)](http://travis-ci.org/[antoinealb]/[lwip_test])
+[![Build Status](https://travis-ci.org/antoinealb/lwip_test.png)](http://travis-ci.org/antoinealb/lwip_test)
 
 My test app for the LWIP IP stack. It does the following :
 
