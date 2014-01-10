@@ -33,6 +33,8 @@ You should now be able to ping 192.168.0.9, wireshark on it, etc.
 
 **Note:** For some reason, it won't work outside GDB. Did not have enough time to investigate yet.
 
+Im also trying to make a Travis CI continuous build.
+
 
 
 
