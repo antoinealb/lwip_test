@@ -1,6 +1,7 @@
 language: c
 compiler:
   - gcc
+  - clang
 
 install: 
     - git clone https://github.com/cvra/lwip_ucos2.git ../lwip_ucos2
