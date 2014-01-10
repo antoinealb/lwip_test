@@ -7,6 +7,34 @@ My test app for the LWIP IP stack. It does the following :
 * It creates a loopback interface and a Serial Line IP interface.
 * It sends some TCP data to itself over the loopback.
 
+Build on Linux
+==============
+It is now possible to build the test application and run it on Linux for debug purposes.
+Your kernel needs to be compiled with tun/tap interface support, which seems to be the case for at least Arch Linux.
+You will also need CMake and GCC.
+
+To do so, you will need to clone this repository along with cvra/lwip_ucos2. For example .
+
+    git clone https://github.com/antoinealb/lwip_test.git
+    git clone https://github.com/cvra/lwip_ucos2.git
+
+Then, to build, it is standard cmake :
+
+    cd lwip_test
+    mkdir build && cd build
+    cmake ..
+    make
+
+And finally to test :
+
+    sudo gdb ./robot
+
+You should now be able to ping 192.168.0.9, wireshark on it, etc.
+
+**Note:** For some reason, it won't work outside GDB. Did not have enough time to investigate yet.
+
+
+
 
 Notes about multithreading programming
 ======================================
