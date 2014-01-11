@@ -17,21 +17,20 @@ static void tcpecho_thread(void *arg) {
     /* Tell connection to go into listening mode. */
     netconn_listen(conn);
 
-    while (1) {
-
+    while(1) {
         /* Grab new connection. */
         err = netconn_accept(conn, &newconn);
         printf("accepted new connection %p\n", newconn);
         /* Process the new connection. */
-        if (err == ERR_OK) {
+        if(err == ERR_OK) {
             struct netbuf *buf;
             void *data;
             u16_t len;
 
-            while ((err = netconn_recv(newconn, &buf)) == ERR_OK) {
+            while((err = netconn_recv(newconn, &buf)) == ERR_OK) {
                 do {
                     netbuf_data(buf, &data, &len);
-                    printf("Received \"%s\" (len = %d) !\n", data, len); 
+                    printf("Received \"%s\" (len = %d) !\n", data, len);
                     err = netconn_write(newconn, data, len, NETCONN_COPY);
 #if 1
                     if (err != ERR_OK) {
@@ -41,7 +40,6 @@ static void tcpecho_thread(void *arg) {
                 } while (netbuf_next(buf) >= 0);
                 netbuf_delete(buf);
             }
-            /*printf("Got EOF, looping\n");*/ 
             /* Close connection and discard connection identifier. */
             netconn_close(newconn);
             netconn_delete(newconn);
@@ -49,13 +47,14 @@ static void tcpecho_thread(void *arg) {
     }
 }
 
-const char *test_str = "data";
 
 void send_task(void *arg) {
     ip_addr_t destination, self_ip;
     printf("%s()\n", __FUNCTION__);
     struct netconn *conn;
     err_t err;
+
+    const char *test_str = "data";
     /* Create a new connection identifier. */
     conn = netconn_new(NETCONN_TCP);
 
@@ -75,14 +74,14 @@ void send_task(void *arg) {
 
     printf("Connecting...\n");
     err = netconn_connect(conn, &destination, 7);
-    if (err != ERR_OK) {
+    if(err != ERR_OK) {
         printf("tcpsend: netconn_connect: error %d \"%s\"\n", err, lwip_strerr(err));
         for(;;);
     }
 
     /* Don't send final \0 */
     err = netconn_write(conn, test_str, strlen(test_str), NETCONN_NOCOPY);
-    if (err != ERR_OK) {
+    if(err != ERR_OK) {
         printf("tcpsend: netconn_write: error %d \"%s\"\n",err, lwip_strerr(err));
         for(;;);
     }
