@@ -5,6 +5,8 @@
 #include <lwip/tcpip.h>
 #include <lwip/ip.h>
 
+#include "sntp.h"
+
 
 #ifdef __unix__
 #include <netif/tapif.h>
@@ -109,13 +111,12 @@ void init_task(void *pdata)
     list_netifs();
 
     /* Creates a simple demo app. */
-    ping_init();
-    return;
+//    ping_init();
 
 
-  printf("%s\n", __FUNCTION__);
-  printf("%s\n", __FUNCTION__);
   getchar();
+  sntp_init();
+
 
 #ifndef __unix__
     /* We delete the init task before returning. */
