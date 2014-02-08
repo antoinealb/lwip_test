@@ -60,14 +60,15 @@ void send_task(void *arg) {
 
 
     /* Sets the device we want to connect to. */
-#if 0
-    IP4_ADDR(&destination, 192,168,1,3);
+#if 1
+    IP4_ADDR(&destination, 10, 0, 0, 1);
+    IP4_ADDR(&self_ip, 10, 0, 0, 2);
 #else
     ip_addr_set_loopback(&destination);
-#endif
-
     /* Gets our own IP adress. */
     ip_addr_set_loopback(&self_ip);
+#endif
+
 
     /* Bind connection to well known port number 7. */
     netconn_bind(conn, &self_ip, 7);
