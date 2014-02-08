@@ -11,10 +11,9 @@
 
 
 /* Network Time protocol config. */
-#define SNTP_SERVER_ADDRESS  "192.168.1.1" /* pool.ntp.org */
+#define SNTP_SERVER_ADDRESS  "77.245.18.26" /* pool.ntp.org */
 #define SNTP_SET_SYSTEM_TIME_US(sec, us) time_set(sec, us)
 #define SNTP_SOCKET 1
-//#define SNTP_SERVER_DNS 1
 
 
 #define SYS_LIGHTWEIGHT_PROT 0
