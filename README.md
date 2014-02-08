@@ -63,3 +63,8 @@ Really bad things can happen when you don't set your priority correctly.
 | SLIP      | 31       | The Serial Line IP Input thread. Continuously polls the serial line.
 | Receiver  | 32       | The receiving thread for the ping application.
 | Sender    | 33       | The sending thread for the ping app.
+
+# Enabling IP forwarding on my Linux box
+    sudo sysctl -w net.ipv4.ip_forward=1
+    sudo iptables --append FORWARD --in-interface tap0 -j ACCEPT
+    sudo iptables --table nat --append POSTROUTING --out-interface wlan0 -j MASQUERADE
