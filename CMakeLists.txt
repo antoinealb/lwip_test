@@ -26,7 +26,7 @@ file(GLOB
     project_files
     main.c
     sntp.c
-    time.c
+    timestamp.c
     ping.c)
 
 include_directories(./)
