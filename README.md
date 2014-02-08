@@ -31,9 +31,7 @@ And finally to test :
 
     sudo gdb ./robot
 
-You should now be able to ping 192.168.0.9, wireshark on it, etc.
-
-**Note:** For some reason, it won't work outside GDB. Did not have enough time to investigate yet.
+You should now be able to ping 10.0.0.1. Wireshark can also be used to listen on interface tap0 to see what's going on.
 
 
 
