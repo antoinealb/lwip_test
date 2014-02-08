@@ -12,7 +12,7 @@ static void tcpecho_thread(void *arg) {
     conn = netconn_new(NETCONN_TCP);
 
     /* Bind connection to well known port number 7. */
-    netconn_bind(conn, NULL, 7);
+    netconn_bind(conn, NULL, 1235);
 
     /* Tell connection to go into listening mode. */
     netconn_listen(conn);
@@ -55,6 +55,10 @@ void send_task(void *arg) {
     err_t err;
 
     const char *test_str = "data";
+
+    /* Waits for user imput so we can fire wireshark. */
+    getchar();
+
     /* Create a new connection identifier. */
     conn = netconn_new(NETCONN_TCP);
 
@@ -71,10 +75,10 @@ void send_task(void *arg) {
 
 
     /* Bind connection to well known port number 7. */
-    netconn_bind(conn, &self_ip, 7);
+    netconn_bind(conn, &self_ip, 1235);
 
     printf("Connecting...\n");
-    err = netconn_connect(conn, &destination, 7);
+    err = netconn_connect(conn, &destination, 1235);
     if(err != ERR_OK) {
         printf("tcpsend: netconn_connect: error %d \"%s\"\n", err, lwip_strerr(err));
         for(;;);
@@ -86,13 +90,18 @@ void send_task(void *arg) {
         printf("tcpsend: netconn_write: error %d \"%s\"\n",err, lwip_strerr(err));
         for(;;);
     }
+
     for(;;);
 }
 
 void ping_init(void) {
     printf("%s()\n", __FUNCTION__);
+
+#if 0
     sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, 32);
+#else
     sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, 33);
+#endif
     //send_task(NULL);
 
 }

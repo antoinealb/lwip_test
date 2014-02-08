@@ -8,23 +8,25 @@ set(lwip_root ../lwip_ucos2)
 project(lwip_test)
 
 file(GLOB_RECURSE
-	core_files
+    core_files
     ${lwip_root}/src/core/*
     ${lwip_root}/src/api/*
     ${lwip_root}/src/netif/*
-)	
+)
 
 file(GLOB_RECURSE
-	port_files
+    port_files
     ${lwip_root}/src/contrib/ports/unix/perf.c
     ${lwip_root}/src/contrib/ports/unix/lwip_chksum.c
     ${lwip_root}/src/contrib/ports/unix/sys_arch.c
     ${lwip_root}/src/contrib/ports/unix/netif/*
-)	
+)
 
 file(GLOB
     project_files
     main.c
+    sntp.c
+    time.c
     ping.c)
 
 include_directories(./)
@@ -38,7 +40,7 @@ find_package (Threads)
 # Executable source file definitions
 add_executable(
     robot
-	${core_files}
+    ${core_files}
     ${port_files}
     ${project_files}
 )
