@@ -61,6 +61,7 @@ Really bad things can happen when you don't set your priority correctly.
 | SLIP      | 31       | The Serial Line IP Input thread. Continuously polls the serial line.
 | Receiver  | 32       | The receiving thread for the ping application.
 | Sender    | 33       | The sending thread for the ping app.
+| SNTP      | 34       | The Network Time Protocol thread.
 
 # Enabling IP forwarding on my Linux box
     sudo sysctl -w net.ipv4.ip_forward=1

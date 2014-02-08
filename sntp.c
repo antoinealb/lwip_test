@@ -441,7 +441,7 @@ sntp_init(void)
 {
 
   printf("%s\n", __FUNCTION__);
-  sys_thread_new("sntp_thread", sntp_thread, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+  sys_thread_new("sntp_thread", sntp_thread, NULL, DEFAULT_THREAD_STACKSIZE, SNTP_THREAD_PRIO);
 }
 
 #else /* SNTP_SOCKET */
