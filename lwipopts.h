@@ -14,6 +14,7 @@
 #define SNTP_SERVER_ADDRESS  "77.245.18.26" /* pool.ntp.org */
 #define SNTP_SET_SYSTEM_TIME_US(sec, us) time_set(sec, us)
 #define SNTP_SOCKET 1
+#define SNTP_UPDATE_DELAY (60*1000) /* sync every minute */
 
 
 #define SYS_LIGHTWEIGHT_PROT 0
