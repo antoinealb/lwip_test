@@ -43,7 +43,24 @@ void sio_send(u8_t c, sio_fd_t fd)
     OS_EXIT_CRITICAL();
 #endif
 
+    OS_ENTER_CRITICAL();
+    led_val = IORD(LED_BASE, 0); 
+    led_val |= (1 << 7);
+    IOWR(LED_BASE, 0, led_val);
+    OS_EXIT_CRITICAL();
+
     fputc((int)c, out);
+
+    // FLUSH MAKE DATA SLOW
+
+    fflush(out);
+
+    OS_ENTER_CRITICAL();
+    led_val = IORD(LED_BASE, 0); 
+    led_val &= ~(1 << 7);
+    IOWR(LED_BASE, 0, led_val);
+    OS_EXIT_CRITICAL();
+
 }
 
 /**
