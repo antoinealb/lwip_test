@@ -45,6 +45,7 @@ Notes about multithreading programming
   Semaphores, on the other hand, really suspend the higher priority thread, giving the other CPU time to complete its task. Simply remember to delete them once you have used them.
 * Maintaining a priority list (see below) helps preventing locks and reasoning about them.
 * Tasks never return. If they do, they should delete themselves before continuing.
+* In case of weird variable modifications, stack overflow is a possibility. Use the mapfile to check for nearby stacks.
 
 TODO List
 =========
@@ -73,3 +74,10 @@ Really bad things can happen when you don't set your priority correctly.
     sudo sysctl -w net.ipv4.ip_forward=1
     sudo iptables --append FORWARD --in-interface tap0 -j ACCEPT
     sudo iptables --table nat --append POSTROUTING --out-interface wlan0 -j MASQUERADE
+
+# UARTs
+* COMBT2 is the first one from the right when looking into the connector
+* COMBT1 is the second one from the right
+* For some reason, it is not possible to open an uart port in "rw" mode.
+* Having multiple screen instances opened is possible and will cause dropped bytes.
+
