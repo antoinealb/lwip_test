@@ -19,9 +19,11 @@
 #ifndef __unix__
 #define   TASK_STACKSIZE          2048
 #define   INIT_TASK_PRIORITY      20
+#define   BLINK_TASK_PRIORITY      35
 
 /** Stack for the init task. */
 OS_STK    init_task_stk[TASK_STACKSIZE];
+OS_STK    blink_task_stk[TASK_STACKSIZE];
 #endif
 
 /** Shared semaphore to signal when lwIP init is done. */
@@ -116,6 +118,20 @@ void ip_stack_init(void) {
 }
 
 
+void blink_task(void *pdata)
+{
+    OS_CPU_SR cpu_sr;
+    int32_t led_val;
+    while(1) {
+        OS_ENTER_CRITICAL();
+        led_val = IORD(LED_BASE, 0);
+        led_val ^= (1 << 2);
+        IOWR(LED_BASE, 0, led_val);
+        OS_EXIT_CRITICAL();
+        OSTimeDlyHMSM(0, 0, 0, 500);
+    }
+}
+
 
 /** @brief Init task.
  *
@@ -137,6 +153,15 @@ void init_task(void *pdata)
 
   getchar();
   sntp_init();
+    /* Creates the heartbeat task. */
+    OSTaskCreateExt(blink_task,
+                    NULL,
+                    &blink_task_stk[TASK_STACKSIZE-1],
+                    BLINK_TASK_PRIORITY,
+                    BLINK_TASK_PRIORITY,
+                    &blink_task_stk[0],
+                    TASK_STACKSIZE,
+                    NULL, NULL);
 
 
 #ifndef __unix__
