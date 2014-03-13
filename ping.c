@@ -26,12 +26,13 @@ static void tcpecho_thread(void *arg) {
             struct netbuf *buf;
             void *data;
             u16_t len;
+            int32_t sum = 0;
 
             while((err = netconn_recv(newconn, &buf)) == ERR_OK) {
                 do {
                     netbuf_data(buf, &data, &len);
-                    printf("Received \"%s\" (len = %d) !\n", data, len);
                     err = netconn_write(newconn, data, len, NETCONN_COPY);
+                    sum += len;
 #if 1
                     if (err != ERR_OK) {
                         printf("tcpecho: netconn_write: error \"%s\"\n", lwip_strerr(err));
@@ -40,6 +41,7 @@ static void tcpecho_thread(void *arg) {
                 } while (netbuf_next(buf) >= 0);
                 netbuf_delete(buf);
             }
+            printf("total : %d\n", sum);
             /* Close connection and discard connection identifier. */
             netconn_close(newconn);
             netconn_delete(newconn);
@@ -97,7 +99,7 @@ void send_task(void *arg) {
 void ping_init(void) {
     printf("%s()\n", __FUNCTION__);
 
-#if 0
+#if 1
     sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, 32);
 #else
     sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, 33);
