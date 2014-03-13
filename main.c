@@ -64,8 +64,8 @@ void ip_stack_init(void) {
     /* Netif configuration */
     static ip_addr_t ipaddr, netmask, gw;
 
-    IP4_ADDR(&gw, 10,0,0,1);
-    IP4_ADDR(&ipaddr, 10, 0,0,2);
+    IP4_ADDR(&gw, 192,168,0,1);
+    IP4_ADDR(&ipaddr, 192,168,4,9);
     IP4_ADDR(&netmask, 255,255,255,0);
 
     /* Creates the "Init done" semaphore. */
