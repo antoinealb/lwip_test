@@ -1,4 +1,4 @@
-
+#include <io.h>
 #include <stdio.h>
 
 #include <lwip/sys.h>
@@ -96,6 +96,14 @@ void ip_stack_init(void) {
 
 }
 
+
+void cvra_set_uart_speed(int32_t *uart_adress, int baudrate) {
+    int32_t divisor;
+        /* Formule tiree du Embedded IP User Guide page 7-4 */
+        divisor = (int32_t)(((float)PIO_FREQ/(float)baudrate) + 0.5);
+        IOWR(uart_adress, 0x04, divisor); // ecrit le diviseur dans le bon registre
+}
+
 /** @brief Init task.
  *
  * This task is reponsible to initialize the whole system and to create tasks
@@ -131,6 +139,11 @@ int main(void)
 #ifdef __unix__
     init_task(NULL);
 #else
+    cvra_set_uart_speed(COMBT2_BASE, 57600);
+    cvra_set_uart_speed(COMBT1_BASE, 57600);
+    cvra_set_uart_speed(COMPC_BASE, 57600);
+    cvra_set_uart_speed(COMBEACON_BASE, 57600);
+
     /* We have to do all the init in a task because lwIP expects most
      * multi thread functionality to be available right away. */
     OSTaskCreateExt(init_task,
