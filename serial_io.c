@@ -111,7 +111,7 @@ sio_fd_t sio_open(u8_t devnum)
 {
     FILE *fp;
 
-    fp = fopen("/dev/comBT1", "rw");
+    fp = fopen("/dev/comBT1", "w+");
 
     return (sio_fd_t)fp;
 }
