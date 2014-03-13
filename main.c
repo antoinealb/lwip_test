@@ -1,4 +1,3 @@
-#include <io.h>
 #include <stdio.h>
 
 #include <lwip/sys.h>
@@ -12,6 +11,9 @@
 #include <netif/tapif.h>
 #else
 #include <netif/slipif.h>
+
+/* Needed for UART baudrate. */
+#include <io.h>
 #endif
 
 #ifndef __unix__
@@ -27,6 +29,16 @@ sys_sem_t lwip_init_done;
 
 /** Serial net interface */
 struct netif slipf;
+
+#ifndef __unix__
+
+void cvra_set_uart_speed(int32_t *uart_adress, int baudrate) {
+    int32_t divisor;
+    /* Formule tiree du Embedded IP User Guide page 7-4 */
+    divisor = (int32_t)(((float)PIO_FREQ/(float)baudrate) + 0.5);
+    IOWR(uart_adress, 0x04, divisor); // ecrit le diviseur dans le bon registre
+}
+#endif
 
 void list_netifs(void)
 {
@@ -97,12 +109,6 @@ void ip_stack_init(void) {
 }
 
 
-void cvra_set_uart_speed(int32_t *uart_adress, int baudrate) {
-    int32_t divisor;
-        /* Formule tiree du Embedded IP User Guide page 7-4 */
-        divisor = (int32_t)(((float)PIO_FREQ/(float)baudrate) + 0.5);
-        IOWR(uart_adress, 0x04, divisor); // ecrit le diviseur dans le bon registre
-}
 
 /** @brief Init task.
  *
