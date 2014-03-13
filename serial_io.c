@@ -19,6 +19,8 @@
 #define ACTIVITY_LED_RX 1
 #endif
 
+FILE *in, *out;
+
 /**
  * Sends a single character to the serial device.
  * 
@@ -41,7 +43,7 @@ void sio_send(u8_t c, sio_fd_t fd)
     OS_EXIT_CRITICAL();
 #endif
 
-    fputc((int)c, (FILE *)fd);
+    fputc((int)c, out);
 }
 
 /**
@@ -66,7 +68,7 @@ u32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len)
     IOWR(LED_BASE, 0, led_val);
     OS_EXIT_CRITICAL();
 #endif
-    return (u32_t)fread((void *)data, 1, (size_t)len, (FILE *)fd);
+    return (u32_t)fread((void *)data, 1, (size_t)len, in);
 }
 
 
@@ -93,9 +95,12 @@ u32_t sio_tryread(sio_fd_t fd, u8_t *data, u32_t len)
  */
 sio_fd_t sio_open(u8_t devnum) 
 {
-    FILE *fp;
 
-    fp = fopen("/dev/comBT1", "rw");
+    in  = fopen("/dev/comBT2", "r");
+    out = fopen("/dev/comBT2", "w");
 
-    return (sio_fd_t)fp;
+    if (in == NULL || out == NULL)
+        return NULL;
+
+    return 1;
 }
