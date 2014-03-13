@@ -147,12 +147,9 @@ void init_task(void *pdata)
     printf("Listing network interfaces...\n");
     list_netifs();
 
-    /* Creates a simple demo app. */
-//    ping_init();
+    /* Creates a simple 'echo' app. */
+    ping_init();
 
-
-  getchar();
-  sntp_init();
     /* Creates the heartbeat task. */
     OSTaskCreateExt(blink_task,
                     NULL,
