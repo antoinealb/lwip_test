@@ -46,6 +46,12 @@ Notes about multithreading programming
 * Maintaining a priority list (see below) helps preventing locks and reasoning about them.
 * Tasks never return. If they do, they should delete themselves before continuing.
 
+TODO List
+=========
+1. Try to output some of the serial signal to the outside world. [In progress]
+2. Check if we can easily import SLIP/PPPoS data into Wireshark. Maybe custom python script is needed ? [In progress]
+3. Write some docs about connecting the board to a PC.
+
 
 Priority list
 =============
