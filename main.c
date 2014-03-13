@@ -76,9 +76,16 @@ void ip_stack_init(void) {
     /* Netif configuration */
     static ip_addr_t ipaddr, netmask, gw;
 
+#ifdef __unix__
+    /* for some reason 192.168.4.9 fails on my test station. */
+    IP4_ADDR(&gw, 10,0,0,1);
+    IP4_ADDR(&ipaddr, 10,0,0,2);
+    IP4_ADDR(&netmask, 255,255,255,0);
+#else
     IP4_ADDR(&gw, 192,168,0,1);
     IP4_ADDR(&ipaddr, 192,168,4,9);
     IP4_ADDR(&netmask, 255,255,255,0);
+#endif
 
     /* Creates the "Init done" semaphore. */
     sys_sem_new(&lwip_init_done, 0);
