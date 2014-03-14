@@ -34,11 +34,26 @@ struct netif slipf;
 
 #ifndef __unix__
 
-void cvra_set_uart_speed(int32_t *uart_adress, int baudrate) {
+void cvra_set_uart_speed(int32_t *uart_adress, int baudrate)
+{
     int32_t divisor;
     /* Formule tiree du Embedded IP User Guide page 7-4 */
     divisor = (int32_t)(((float)PIO_FREQ/(float)baudrate) + 0.5);
     IOWR(uart_adress, 0x04, divisor); // ecrit le diviseur dans le bon registre
+}
+
+void blink_task(void *pdata)
+{
+    OS_CPU_SR cpu_sr;
+    int32_t led_val;
+    while (1) {
+        OS_ENTER_CRITICAL();
+        led_val = IORD(LED_BASE, 0);
+        led_val ^= (1 << 2);
+        IOWR(LED_BASE, 0, led_val);
+        OS_EXIT_CRITICAL();
+        OSTimeDlyHMSM(0, 0, 0, 500);
+    }
 }
 #endif
 
@@ -118,19 +133,6 @@ void ip_stack_init(void) {
 }
 
 
-void blink_task(void *pdata)
-{
-    OS_CPU_SR cpu_sr;
-    int32_t led_val;
-    while(1) {
-        OS_ENTER_CRITICAL();
-        led_val = IORD(LED_BASE, 0);
-        led_val ^= (1 << 2);
-        IOWR(LED_BASE, 0, led_val);
-        OS_EXIT_CRITICAL();
-        OSTimeDlyHMSM(0, 0, 0, 500);
-    }
-}
 
 
 /** @brief Init task.
@@ -150,6 +152,7 @@ void init_task(void *pdata)
     /* Creates a simple 'echo' app. */
     ping_init();
 
+#ifndef __unix__
     /* Creates the heartbeat task. */
     OSTaskCreateExt(blink_task,
                     NULL,
@@ -159,6 +162,7 @@ void init_task(void *pdata)
                     &blink_task_stk[0],
                     TASK_STACKSIZE,
                     NULL, NULL);
+#endif
 
 
 #ifndef __unix__
