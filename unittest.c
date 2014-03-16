@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <lwip/api.h>
 #include <lwip/inet.h>
 
@@ -115,6 +116,8 @@ char* fragmented_packet_test(void) {
 void unit_test_run_all(void)
 {
     int tests_run = 0, tests_success = 0;
+    /* delays for one second, to avoid race conditions with server thread. */
+    sleep(1);
     TEST_RUN(simple_test);
     TEST_RUN(simple_test);
 //    TEST_RUN(fragmented_packet_test);
