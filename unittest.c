@@ -123,7 +123,7 @@ void unit_test_run_all(void)
 //    TEST_RUN(fragmented_packet_test);
 
     if (tests_run == tests_success) {
-        printf("All test succeeded (%d tests run).\n", tests_run);
+        printf("All tests succeeded (%d tests run).\n", tests_run);
         exit(EXIT_SUCCESS);
     } else {
         printf("Some tests failed (failed : %d/%d)\n", tests_run - tests_success, tests_run);
