@@ -2,6 +2,11 @@
 #include <lwip/api.h>
 #include <lwip/inet.h>
 
+#ifdef __unix__
+#include <stdlib.h>
+#include <string.h>
+#endif
+
 
 static void tcpecho_thread(void *arg) {
     struct netconn *conn, *newconn;
@@ -28,14 +33,11 @@ static void tcpecho_thread(void *arg) {
             struct netbuf *buf;
             void *data;
             u16_t len;
-            int32_t sum = 0;
 
             while((err = netconn_recv(newconn, &buf)) == ERR_OK) {
                 do {
                     netbuf_data(buf, &data, &len);
                     err = netconn_write(newconn, data, len, NETCONN_COPY);
-                    printf("received : %s\n", data);
-                    sum += len;
 #if 1
                     if (err != ERR_OK) {
                         printf("tcpecho: netconn_write: error \"%s\"\n", lwip_strerr(err));
@@ -44,7 +46,6 @@ static void tcpecho_thread(void *arg) {
                 } while (netbuf_next(buf) >= 0);
                 netbuf_delete(buf);
             }
-            printf("total : %d\n", sum);
             /* Close connection and discard connection identifier. */
             netconn_close(newconn);
             netconn_delete(newconn);
@@ -58,12 +59,14 @@ void send_task(void *arg) {
     printf("%s()\n", __FUNCTION__);
     struct netconn *conn;
     err_t err;
+    struct netbuf *buf;
+    void *data;
+    u16_t len;
 
     const char *test_str = "data\n";
 
     /* Create a new connection identifier. */
     conn = netconn_new(NETCONN_TCP);
-
 
     /* Sets the device we want to connect to. */
     IP4_ADDR(&destination, 10, 0, 0, 2);
@@ -74,18 +77,24 @@ void send_task(void *arg) {
 
     printf("Connecting...\n");
     err = netconn_connect(conn, &destination, 1235);
-    if(err != ERR_OK) {
-        printf("tcpsend: netconn_connect: error %d \"%s\"\n", err, lwip_strerr(err));
-        for(;;);
-    }
+
+    LWIP_ASSERT("TCP connection failed.", err == ERR_OK);
 
     /* Don't send final \0 */
     err = netconn_write(conn, test_str, strlen(test_str), NETCONN_NOCOPY);
-    if(err != ERR_OK) {
-        printf("tcpsend: netconn_write: error %d \"%s\"\n",err, lwip_strerr(err));
-        for(;;);
-    }
 
+    LWIP_ASSERT("Netconn write failed.\n", err == ERR_OK);
+
+    err = netconn_recv(conn, &buf);
+    LWIP_ASSERT("Recv failed.", err == ERR_OK);
+
+    netbuf_data(buf, &data, &len);
+    LWIP_ASSERT("Data is not echoed correctly", !strcmp(data, test_str));
+
+#ifdef __unix__
+    printf("Test ok.");
+    exit(EXIT_SUCCESS);
+#endif
     for(;;);
 }
 
@@ -96,5 +105,4 @@ void ping_init(is_server) {
         sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, 32);
     else
         sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, 33);
-    //send_task(NULL);
 }
