@@ -65,11 +65,11 @@ void blink_task(void *pdata)
 void list_netifs(void)
 {
     struct netif *n; /* used for iteration. */
-    for(n=netif_list;n !=NULL;n=n->next) {
+    for (n = netif_list; n != NULL; n = n->next) {
         /* Converts the IP adress to a human readable format. */
         char buf[16+1];
         ipaddr_ntoa_r(&n->ip_addr, buf, 17);
-        printf("%s%d: %s\n", n->name, n->num, buf);
+        printf("%s: %s\n", n->name, buf);
     }
 }
 
