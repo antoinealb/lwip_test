@@ -53,6 +53,7 @@ char* simple_test(void) {
     TEST_ASSERT("Data is not echoed correctly", !strcmp(data, test_str));
 
     netconn_close(conn);
+    return TEST_SUCCESS;
 }
 
 char* fragmented_packet_test(void) {
@@ -105,5 +106,11 @@ void unit_test_run_all(void)
     int tests_run = 0, tests_success = 0;
     TEST_RUN(simple_test);
     TEST_RUN(simple_test);
-    exit(EXIT_SUCCESS);
+    if (tests_run == tests_success) {
+        printf("All test succeeded (%d tests run).\n", tests_run);
+        exit(EXIT_SUCCESS);
+    } else {
+        printf("Some tests failed (failed : %d/%d)\n", tests_run - tests_success, tests_run);
+        exit(EXIT_FAILURE);
+    }
 }
