@@ -34,6 +34,8 @@ int in, out;
  * @param fd serial device handle
  *
  * @note This function will block until the character can be sent.
+ * @bug On UNIX platform, writing to a broken FIFO pipe will cause a SIGPIPE
+ * to be raised.
  */
 void sio_send(u8_t c, sio_fd_t fd)
 {
