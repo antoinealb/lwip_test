@@ -56,6 +56,9 @@ char* simple_test(void) {
     return TEST_SUCCESS;
 }
 
+/** Tests the fragmented IP packets.
+ * @bug Doesn't pass yet.
+ */
 char* fragmented_packet_test(void) {
     ip_addr_t destination, self_ip;
     printf("%s()\n", __FUNCTION__);
@@ -69,8 +72,11 @@ char* fragmented_packet_test(void) {
     char test_str[2001];
     test_str[0] = 0;
 
+    char data_str[2001];
+    data_str[0] = 0;
+
     /* Fills the data pattern. */
-    while (strlen(test_str) < 2000)
+    while (strlen(test_str) < 1900)
         strcat(test_str, "data");
 
 
@@ -98,7 +104,12 @@ char* fragmented_packet_test(void) {
     TEST_ASSERT("Recv failed.", err == ERR_OK);
 
     netbuf_data(buf, &data, &len);
+
     TEST_ASSERT("Data is not echoed correctly", !strcmp(data, test_str));
+
+    netconn_close(conn);
+
+    return TEST_SUCCESS;
 }
 
 void unit_test_run_all(void)
@@ -106,6 +117,8 @@ void unit_test_run_all(void)
     int tests_run = 0, tests_success = 0;
     TEST_RUN(simple_test);
     TEST_RUN(simple_test);
+//    TEST_RUN(fragmented_packet_test);
+
     if (tests_run == tests_success) {
         printf("All test succeeded (%d tests run).\n", tests_run);
         exit(EXIT_SUCCESS);
