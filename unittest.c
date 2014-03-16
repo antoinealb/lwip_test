@@ -63,4 +63,6 @@ void unit_test_run_all(void)
 {
     int tests_run = 0, tests_success = 0;
     TEST_RUN(simple_test);
+    TEST_RUN(simple_test);
+    exit(EXIT_SUCCESS);
 }
