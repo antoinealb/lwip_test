@@ -34,8 +34,7 @@
 #ifdef __unix__
 /* <sys/time.h> is included in cc.h! */
 #define LWIP_TIMEVAL_PRIVATE 0
-#define LWIP_ARP 1
-#define LWIP_HAVE_SLIPIF 0
+#define LWIP_HAVE_SLIPIF 1
 #else
 #define LWIP_ARP 0
 #define LWIP_HAVE_SLIPIF 1

@@ -25,6 +25,7 @@ file(GLOB_RECURSE
 file(GLOB
     project_files
     main.c
+    serial_io.c
     sntp.c
     timestamp.c
     ping.c)

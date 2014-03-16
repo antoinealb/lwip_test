@@ -8,6 +8,8 @@ static void tcpecho_thread(void *arg) {
     err_t err;
     LWIP_UNUSED_ARG(arg);
 
+    printf("%s()\n", __FUNCTION__);
+
     /* Create a new connection identifier. */
     conn = netconn_new(NETCONN_TCP);
 
@@ -32,6 +34,7 @@ static void tcpecho_thread(void *arg) {
                 do {
                     netbuf_data(buf, &data, &len);
                     err = netconn_write(newconn, data, len, NETCONN_COPY);
+                    printf("received : %s\n", data);
                     sum += len;
 #if 1
                     if (err != ERR_OK) {
@@ -56,25 +59,15 @@ void send_task(void *arg) {
     struct netconn *conn;
     err_t err;
 
-    const char *test_str = "data";
-
-    /* Waits for user imput so we can fire wireshark. */
-    getchar();
+    const char *test_str = "data\n";
 
     /* Create a new connection identifier. */
     conn = netconn_new(NETCONN_TCP);
 
 
     /* Sets the device we want to connect to. */
-#if 1
-    IP4_ADDR(&destination, 10, 0, 0, 1);
-    IP4_ADDR(&self_ip, 10, 0, 0, 2);
-#else
-    ip_addr_set_loopback(&destination);
-    /* Gets our own IP adress. */
-    ip_addr_set_loopback(&self_ip);
-#endif
-
+    IP4_ADDR(&destination, 10, 0, 0, 2);
+    IP4_ADDR(&self_ip, 10, 0, 0, 3);
 
     /* Bind connection to well known port number 7. */
     netconn_bind(conn, &self_ip, 1235);
@@ -96,14 +89,12 @@ void send_task(void *arg) {
     for(;;);
 }
 
-void ping_init(void) {
+void ping_init(is_server) {
     printf("%s()\n", __FUNCTION__);
 
-#if 1
-    sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, 32);
-#else
-    sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, 33);
-#endif
+    if (is_server)
+        sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, 32);
+    else
+        sys_thread_new("echo",send_task, NULL, DEFAULT_THREAD_STACKSIZE, 33);
     //send_task(NULL);
-
 }

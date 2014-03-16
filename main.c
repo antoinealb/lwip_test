@@ -9,6 +9,7 @@
 
 #ifdef __unix__
 #include <netif/tapif.h>
+#include <netif/slipif.h>
 #else
 #include <netif/slipif.h>
 
@@ -28,6 +29,9 @@ OS_STK    blink_task_stk[TASK_STACKSIZE];
 
 /** Shared semaphore to signal when lwIP init is done. */
 sys_sem_t lwip_init_done;
+
+/** Global var to say if we are client of server. */
+int is_server = 0;
 
 /** Serial net interface */
 struct netif slipf;
@@ -96,7 +100,12 @@ void ip_stack_init(void) {
 #ifdef __unix__
     /* for some reason 192.168.4.9 fails on my test station. */
     IP4_ADDR(&gw, 10,0,0,1);
-    IP4_ADDR(&ipaddr, 10,0,0,2);
+
+    if (is_server)
+        IP4_ADDR(&ipaddr, 10,0,0,2);
+    else
+        IP4_ADDR(&ipaddr, 10,0,0,3);
+
     IP4_ADDR(&netmask, 255,255,255,0);
 #else
     IP4_ADDR(&gw, 192,168,0,1);
@@ -118,14 +127,8 @@ void ip_stack_init(void) {
     sys_sem_free(&lwip_init_done);
     printf("LWIP init complete\n");
 
-
-#ifdef __unix__
     /* Adds a tap pseudo interface for unix debugging. */
-    netif_add(&slipf,&ipaddr, &netmask, &gw, NULL, tapif_init, tcpip_input);
-#else
-    /* Adds the serial interface to the list of network interfaces and makes it the default route. */
-    netif_add(&slipf, &ipaddr, &netmask, &gw, NULL, slipif_init, tcpip_input);
-#endif
+    netif_add(&slipf, &ipaddr, &netmask, &gw, &is_server, slipif_init, tcpip_input);
 
     netif_set_default(&slipf);
     netif_set_up(&slipf);
@@ -150,7 +153,7 @@ void init_task(void *pdata)
     list_netifs();
 
     /* Creates a simple 'echo' app. */
-    ping_init();
+    ping_init(is_server);
 
 #ifndef __unix__
     /* Creates the heartbeat task. */
@@ -171,9 +174,20 @@ void init_task(void *pdata)
 #endif
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
     printf("==== Boot ====\n");
+
+#ifdef __unix__
+    if (argc == 2)
+        is_server = 1;
+    else
+        is_server = 0;
+#else
+    is_server = 1;
+#endif
+
+
 
 #ifdef __unix__
     init_task(NULL);
