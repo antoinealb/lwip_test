@@ -4,6 +4,10 @@
 
 #include "lwip/sio.h"
 
+#ifdef __unix__
+#include <fcntl.h>
+#endif
+
 
 
 /** Enables activity LEDs. */
@@ -21,7 +25,7 @@
 #define ACTIVITY_LED_RX 1
 #endif
 
-FILE *in, *out;
+int in, out;
 
 /**
  * Sends a single character to the serial device.
@@ -45,10 +49,7 @@ void sio_send(u8_t c, sio_fd_t fd)
     OS_EXIT_CRITICAL();
 #endif
 
-    fputc((int)c, out);
-
-    // FLUSH MAKE DATA SLOW
-    fflush(out);
+    write(out, &c, 1);
 }
 
 /**
@@ -73,7 +74,7 @@ u32_t sio_read(sio_fd_t fd, u8_t *data, u32_t len)
     IOWR(LED_BASE, 0, led_val);
     OS_EXIT_CRITICAL();
 #endif
-    return (u32_t)fread((void *)data, 1, (size_t)len, in);
+    return (u32_t)read(in, (void *)data, (size_t)len);
 }
 
 
@@ -100,19 +101,17 @@ u32_t sio_tryread(sio_fd_t fd, u8_t *data, u32_t len)
  */
 sio_fd_t sio_open(u8_t devnum)
 {
-
     printf("opening devnum = %d\n", devnum);
     if (devnum) {
-        in  = fopen("server_in.fifo", "r");
-        out = fopen("server_out.fifo", "w");
+        in  = open("server_in.fifo", O_RDONLY);
+        out = open("server_out.fifo", O_WRONLY);
     } else {
-        out = fopen("server_in.fifo", "w");
-        in  = fopen("server_out.fifo", "r");
+        out = open("server_in.fifo", O_WRONLY);
+        in  = open("server_out.fifo", O_RDONLY);
     }
-    printf("opening\n");
 
-    if (in == NULL || out == NULL)
+    if (in == -1 || out == -1)
         return NULL;
 
-    return in;
+    return &in;
 }
