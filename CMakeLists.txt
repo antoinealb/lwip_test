@@ -29,7 +29,7 @@ file(GLOB
     sntp.c
     unittest.c
     timestamp.c
-    ping.c)
+    tcpecho.c)
 
 include_directories(./)
 include_directories(${lwip_root}/src/include)

@@ -5,6 +5,7 @@
 #include <lwip/ip.h>
 
 #include "sntp.h"
+#include "unittest.h"
 
 
 #ifdef __unix__
@@ -153,7 +154,11 @@ void init_task(void *pdata)
     list_netifs();
 
     /* Creates a simple 'echo' app. */
-    ping_init(is_server);
+    if (is_server)
+        tcpecho_init();
+    else
+        unit_test_run_all();
+
 
 #ifndef __unix__
     /* Creates the heartbeat task. */

@@ -59,7 +59,8 @@ char* simple_test(void) {
     for(;;);
 }
 
-void unit_test_run_all(void *arg) {
+void unit_test_run_all(void)
+{
     int tests_run = 0, tests_success = 0;
     TEST_RUN(simple_test);
 }

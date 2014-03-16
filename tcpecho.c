@@ -1,7 +1,6 @@
 #include <lwip/sockets.h>
 #include <lwip/api.h>
 #include <lwip/inet.h>
-#include "unittest.h"
 
 #ifdef __unix__
 #include <stdlib.h>
@@ -56,11 +55,7 @@ static void tcpecho_thread(void *arg) {
 
 
 
-void ping_init(is_server) {
-    printf("%s()\n", __FUNCTION__);
-
-    if (is_server)
-        sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, 32);
-    else
-        sys_thread_new("echo",unit_test_run_all, NULL, DEFAULT_THREAD_STACKSIZE, 33);
+void tcpecho_init(void)
+{
+    sys_thread_new("echo",tcpecho_thread , NULL, DEFAULT_THREAD_STACKSIZE, 32);
 }
