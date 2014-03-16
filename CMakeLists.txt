@@ -27,6 +27,7 @@ file(GLOB
     main.c
     serial_io.c
     sntp.c
+    unittest.c
     timestamp.c
     ping.c)
 
