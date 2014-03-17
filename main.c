@@ -154,10 +154,14 @@ void init_task(void *pdata)
     list_netifs();
 
     /* Creates a simple 'echo' app. */
+#ifdef __unix__
     if (is_server)
         tcpecho_init();
     else
         unit_test_run_all();
+#else
+    tcpecho_init();
+#endif
 
 
 #ifndef __unix__

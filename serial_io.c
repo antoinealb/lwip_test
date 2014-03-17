@@ -1,12 +1,10 @@
 #include <stdio.h>
 #include <lwip/ip.h>
 #include <netif/slipif.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "lwip/sio.h"
-
-#ifdef __unix__
-#include <fcntl.h>
-#endif
 
 
 
