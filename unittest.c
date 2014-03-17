@@ -80,7 +80,6 @@ char* fragmented_packet_test(void) {
     while (strlen(test_str) < 1900)
         strcat(test_str, "data");
 
-
     /* Create a new connection identifier. */
     conn = netconn_new(NETCONN_TCP);
 
@@ -101,12 +100,19 @@ char* fragmented_packet_test(void) {
 
     TEST_ASSERT("Netconn write failed.\n", err == ERR_OK);
 
-    err = netconn_recv(conn, &buf);
-    TEST_ASSERT("Recv failed.", err == ERR_OK);
+    /* Reads whole response. */
+    int sum=0;
+    while(sum < strlen(test_str) && (err = netconn_recv(conn, &buf)) == ERR_OK) {
+        do {
+            netbuf_data(buf, &data, &len);
+            strncat(data_str, data, len);
+            sum += len;
+        } while (netbuf_next(buf) >= 0);
+        netbuf_delete(buf);
+    }
 
-    netbuf_data(buf, &data, &len);
 
-    TEST_ASSERT("Data is not echoed correctly", !strcmp(data, test_str));
+    TEST_ASSERT("Data is not echoed correctly", !strcmp(data_str, test_str));
 
     netconn_close(conn);
 
@@ -120,7 +126,7 @@ void unit_test_run_all(void)
     sleep(1);
     TEST_RUN(simple_test);
     TEST_RUN(simple_test);
-//    TEST_RUN(fragmented_packet_test);
+    TEST_RUN(fragmented_packet_test);
 
     if (tests_run == tests_success) {
         printf("All tests succeeded (%d tests run).\n", tests_run);
