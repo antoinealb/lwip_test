@@ -102,6 +102,7 @@ u32_t sio_tryread(sio_fd_t fd, u8_t *data, u32_t len)
 sio_fd_t sio_open(u8_t devnum)
 {
     printf("opening devnum = %d\n", devnum);
+#ifdef __unix__
     if (devnum) {
         in  = open("server_in.fifo", O_RDONLY);
         out = open("server_out.fifo", O_WRONLY);
@@ -109,6 +110,10 @@ sio_fd_t sio_open(u8_t devnum)
         out = open("server_in.fifo", O_WRONLY);
         in  = open("server_out.fifo", O_RDONLY);
     }
+#else
+    out = open("/dev/comBT2", O_WRONLY);
+    in  = open("/dev/comBT2", O_RDONLY);
+#endif
 
     if (in == -1 || out == -1)
         return NULL;
