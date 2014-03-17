@@ -114,6 +114,8 @@ char* fragmented_packet_test(void) {
 
     TEST_ASSERT("Data is not echoed correctly", !strcmp(data_str, test_str));
 
+    TEST_ASSERT("Travis, are you there ?", 0 == 1);
+
     netconn_close(conn);
 
     return TEST_SUCCESS;
