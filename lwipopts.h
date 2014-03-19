@@ -22,8 +22,8 @@
 #define MEMP_MEM_MALLOC 1
 #define MEM_ALIGNMENT 4
 #define IP_FORWARD 1
-#define IP_REASSEMBLY 1
-#define IP_FRAG 1
+#define IP_REASSEMBLY 0
+#define IP_FRAG 0
 #define LWIP_BROADCAST_PING 1
 #define LWIP_MULTICAST_PING 1
 #define LWIP_DNS 0
