@@ -202,7 +202,7 @@ int main(int argc, char **argv)
     init_task(NULL);
 #else
     /* ComBT2 is the main link to the PC (TCP/IP) and then it needs to be fast. */
-    cvra_set_uart_speed(COMBT2_BASE, 230400);
+    cvra_set_uart_speed(COMBT2_BASE, 57600);
     cvra_set_uart_speed(COMBT1_BASE, 57600);
     cvra_set_uart_speed(COMPC_BASE, 57600);
     cvra_set_uart_speed(COMBEACON_BASE, 57600);
